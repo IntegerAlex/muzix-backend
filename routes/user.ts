@@ -7,7 +7,7 @@ import { signUp } from "../src/auth";
 
 
 router.get('/signup', (req, res) => {
-    const { username, password, email }: { username: string, password: string, email: string } = req.body as any;
+    const { username, password, email } = req.body as { username: string, password: string, email: string }; 
     if (username && password && email) {
         signUp(username, password, email).then((result:boolean) => {
             if (result) {
