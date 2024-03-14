@@ -10,14 +10,14 @@ router.get('/', (req, res) => {
 
 router.get('search', (req, res) => {
     const {searchTerm, sessionId} = req.query as {searchTerm: string, sessionId: string};
-    searchYT(searchTerm, sessionId).then((result: any) => {
+    searchYT(searchTerm, sessionId).then((result) => {
         res.json(result);
     })
 })
 
 router.get('stream', (req, res) => {
     const { videoId, sessionId } = req.query as { videoId: string, sessionId: string };
-    streamYT(videoId, sessionId).then((result: any) => {
+    streamYT(videoId, sessionId).then((result: string) => {
         res.json(result);
     })
 })
