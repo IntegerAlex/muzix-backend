@@ -26,7 +26,7 @@ export async function searchYT(query: string, sessionId: string): Promise<VideoS
       },
     });
 
-    return response.data.items.map((item: any) => ({ 
+    return response.data.items.map((item:YouTubeSearchResult) => ({
       videoId: item.id.videoId,
       title: item.snippet.title,
       description: item.snippet.description,
@@ -84,3 +84,21 @@ searchYT('starboy', 'yourSessionId').then((results) => {
 
 
 
+interface YouTubeSearchResult {
+  videoId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  id: { 
+    videoId: string; 
+  };
+  snippet: { 
+    title: string;
+    description: string;
+    thumbnails: { 
+      default: { 
+        url: string; 
+      }
+    } 
+  };
+}
