@@ -5,9 +5,12 @@ name = "javascript"
 
   [analyzers.meta]
   environment = [
-    "nodejs",
-    "browser"
+    "browser",
+    "nodejs"
   ]
+
+[[transformers]]
+name = "prettier"
 
 [[transformers]]
 name = "standardjs"
