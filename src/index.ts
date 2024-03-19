@@ -1,24 +1,19 @@
-import express from 'express';
-import {router } from '../routes/user';
-const HLSServer  = require('hls-server')
-import path from 'path'
-import bodyParser from 'body-parser';
-
+import express from "express";
+import { router } from "../routes/user";
+const HLSServer = require("hls-server");
+import path from "path";
+import bodyParser from "body-parser";
 
 const app = express();
 // const view = express(); // view server
 const port = 8080;
 
 app.use(bodyParser.json());
-app.use('/user', router);
+app.use("/user", router);
 
-
-app.get('/', (req, res) => {
-    res.sendStatus(200);
+app.get("/", (req, res) => {
+  res.sendStatus(200);
 });
-
-
-
 
 // const hls = new HLSServer({
 //     path: '/h', // Endpoint for HLS stream
@@ -31,10 +26,9 @@ app.get('/', (req, res) => {
 //         }
 //     }
 // });
-    
+
 // hls.run()
 
-
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });
