@@ -1,4 +1,6 @@
 import express from "express";
+
+import path = require("path")
 import { searchYT, streamYT } from "../src/stream";
 const router = express.Router();
 
@@ -18,6 +20,7 @@ router.get('search', (req, res) => {
 router.get('stream', (req, res) => {
     const { videoId, sessionId } = req.query as { videoId: string, sessionId: string };
     streamYT(videoId, sessionId).then((result: string) => {
-        res.json(result);
+        res.send()
     })
 })
+
