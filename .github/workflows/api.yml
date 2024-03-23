@@ -32,11 +32,18 @@ jobs:
             changed_files=$(git show --pretty="" --name-only "$commit_hash")
 
             # Search for API keys in each changed file
+            found_api_key=false
             for file in $changed_files; do
                 if grep -qE "$API_KEY_REGEX" "$file"; then
                     echo "Potential API key found in commit: $commit_hash - $commit_message"
                     echo "Affected file: $file"
+                    found_api_key=true
                     # Add more detailed output or logging as needed
                 fi
             done
+
+            # Check if API key was found
+            if ! $found_api_key; then
+                echo "No potential API keys found in commit: $commit_hash - $commit_message"
+            fi
         done
