@@ -1,0 +1,42 @@
+name: API Key Check
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_keys:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: npm install # or yarn install, depending on your project
+      
+    - name: Check API keys
+      run: |
+        # Define regular expressions for common API key formats
+        API_KEY_REGEX="API_KEY=[A-Za-z0-9_\-]+"
+        # Add more regex patterns for different API key formats as needed
+
+        # Iterate over each commit in the repository's history
+        git log --oneline | while read commit; do
+            # Extract commit hash and commit message
+            commit_hash=$(echo "$commit" | cut -d ' ' -f 1)
+            commit_message=$(echo "$commit" | cut -d ' ' -f 2-)
+
+            # Inspect changes introduced by the commit
+            changed_files=$(git show --pretty="" --name-only "$commit_hash")
+
+            # Search for API keys in each changed file
+            for file in $changed_files; do
+                if grep -qE "$API_KEY_REGEX" "$file"; then
+                    echo "Potential API key found in commit: $commit_hash - $commit_message"
+                    echo "Affected file: $file"
+                    # Add more detailed output or logging as needed
+                fi
+            done
+        done
