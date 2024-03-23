@@ -3,7 +3,7 @@ name: API Key Check and Email
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   check_keys_and_email:
