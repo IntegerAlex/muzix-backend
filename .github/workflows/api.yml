@@ -3,7 +3,7 @@ name: API Key Check and Email
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   check_keys_and_email:
@@ -45,6 +45,7 @@ jobs:
             # Check if API key was found in the commit
             if ! $found_api_key; then
                 echo "No potential API keys found in commit: $commit_hash - $commit_message"
+                echo "::set-output name=no_keys_found::true"
             fi
         done
 
