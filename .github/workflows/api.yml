@@ -1,4 +1,4 @@
-name: API Key Check
+name: API Key Check and Email
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  check_keys:
+  check_keys_and_email:
     runs-on: ubuntu-latest
     
     steps:
@@ -15,21 +15,21 @@ jobs:
       
     - name: Install dependencies
       run: npm install # or yarn install, depending on your project
-      
-    - name: Check API keys
+
+    - name: Iterate over commit history and check for API keys
+      id: check_commits
       run: |
         # Define regular expressions for common API key formats
         API_KEY_REGEX="API_KEY=[A-Za-z0-9_\-]+"
         # Add more regex patterns for different API key formats as needed
 
         # Iterate over each commit in the repository's history
-        git log --oneline | while read commit; do
-            # Extract commit hash and commit message
-            commit_hash=$(echo "$commit" | cut -d ' ' -f 1)
-            commit_message=$(echo "$commit" | cut -d ' ' -f 2-)
+        for commit_hash in $(git rev-list --all); do
+            # Get commit message
+            commit_message=$(git log --format=%B -n 1 $commit_hash)
 
             # Inspect changes introduced by the commit
-            changed_files=$(git show --pretty="" --name-only "$commit_hash")
+            changed_files=$(git show --pretty="" --name-only $commit_hash)
 
             # Search for API keys in each changed file
             found_api_key=false
@@ -42,8 +42,22 @@ jobs:
                 fi
             done
 
-            # Check if API key was found
+            # Check if API key was found in the commit
             if ! $found_api_key; then
                 echo "No potential API keys found in commit: $commit_hash - $commit_message"
             fi
         done
+
+    - name: Send Email if no API keys found
+      if: steps.check_commits.outputs.no_keys_found == 'true'
+      run: |
+        # Script to send email containing commit hashes
+        # Use GitHub API to fetch repository owner information
+        owner_email=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/owner | jq -r '.email')
+
+        # Check if owner's email is available
+        if [ ! -z "$owner_email" ]; then
+            echo "No potential API keys found in commit history." | mail -s "No API Keys Found" $owner_email
+        else
+            echo "Owner's email not available. Unable to send notification."
+        fi
